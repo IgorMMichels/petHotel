@@ -1,0 +1,27 @@
+{
+  "tutores": [
+    { "id": 1, "nome": "Safira", "telefone": "4799991001000" },
+    { "id": 2, "nome": "Safira", "telefone": "4799991001000" },
+    { "id": 3, "nome": "Safira", "telefone": "4799991001000" }
+  ],
+  "pets": [
+    {
+      "id": "1",
+      "nome": "Safira",
+      "especie": "Cachorro",
+      "TutorId": "1"
+    },
+    {
+      "id": "2",
+      "nome": "Safira",
+      "especie": "Cachorro",
+      "TutorId": "2"
+    },
+    {
+      "id": "3",
+      "nome": "Safira",
+      "especie": "Cachorro",
+      "TutorId": "3"
+    }
+  ]
+}
