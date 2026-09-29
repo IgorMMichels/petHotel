@@ -32,7 +32,7 @@ Podemos tratar erros usando __try__ e __catch__. Dentro do __try__ colocamos o c
 
 No projeto PetSchool criamos na aula a função `carregarPets()` para buscar os pets cadastrados na API.
 
-```javascript id="jc2e7i"
+```javascript
 import { onMounted, ref } from 'vue';
 
 const pets = ref([]);
@@ -76,7 +76,7 @@ onMounted(carregarPets);
 
 Na página a gente pode usar alguns operadores do próprio vue para verificar se esta tudo certo, como no v-if e v-else ou v-else-if nesse caso (else if: )
 
-```html id="re31y4"
+```html
 <p v-if="loading">
   Carregando pets...
 </p>
