@@ -4,5 +4,6 @@ import DefaultLayout from '@/components/layout/DefaultLayout.vue';
 </script>
 
 <template>
-  <DefaultLayout/>
+  <DefaultLayout>Página Inicial</DefaultLayout>
+
 </template>

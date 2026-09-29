@@ -8,6 +8,16 @@ const router = createRouter({
       name: 'home',
       component: () => import('../views/HomeView.vue'),
     },
+    {
+      path: '/pets/novo',
+      name: 'addPet',
+      component: () => import('../views/AddPetView.vue'),
+    },
+    {
+      path: '/pets',
+      name: 'petsView',
+      component: () => import('../views/PetViews.vue'),
+    },
   ],
 });
 
