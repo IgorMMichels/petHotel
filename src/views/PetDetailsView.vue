@@ -14,17 +14,21 @@ async function carregarPet() {
 
   const respostaPet = await fetch(`${API_URL}/pets/${idPet}`);
   pet.value = await respostaPet.json();
+
+  const respostaTutor = await fetch(`${API_URL}/pets/${pet.value.tutorId}`)
+  tutor.value = await respostaTutor.json();
 }
 
-onMounted();
+onMounted(carregarPet);
 </script>
 
 <template>
   <h1>Nome do pet: {{ pet.nome }}</h1>
   <p>Espécie: {{ pet.especie }}</p>
+  <p>Tutor: {{ tutor.nome }}</p>
 
   <button class="btn btn-primary">
-    <RouterLink to="{ name: 'pets' }"></RouterLink>
+    <RouterLink to="/pets" class="text-black">Voltar</RouterLink>
   </button>
 </template>
 

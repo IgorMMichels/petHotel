@@ -70,7 +70,7 @@ onMounted(carregarDados);
         <td>{{ pet.especie }}</td>
         <td>{{ pet.tutor }}</td>
         <td>
-          <router-link to="`/pets/${pet.id}`"> Vizualizar </router-link>
+          <RouterLink :to="`/pets/${pet.id}`"> Vizualizar </RouterLink>
         </td>
       </tr>
     </tbody>
