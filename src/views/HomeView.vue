@@ -1,9 +1,5 @@
 <script setup>
 import DefaultLayout from '@/components/layout/DefaultLayout.vue';
-
 </script>
 
-<template>
-  <DefaultLayout>Página Inicial</DefaultLayout>
-
-</template>
+<template>Página Inicial</template>

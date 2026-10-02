@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 
-
 const API_URL = 'http://localhost:3000';
 
 const pets = ref([]);
@@ -18,7 +17,6 @@ async function carregarDados() {
   console.log('tutores:', tutores.value);
 
   loading.value = false;
-
 }
 
 function nomeTutor(tutorId) {
@@ -30,7 +28,7 @@ function nomeTutor(tutorId) {
   return 'Tutor não encontrado';
 }
 
-onMounted(carregarDados)
+onMounted(carregarDados);
 </script>
 
 <template>
@@ -61,12 +59,19 @@ onMounted(carregarDados)
     </thead>
 
     <tbody>
-      <tr v-for="pet in pets" :key="pet.id">
+      <tr
+        v-for="pet in pets"
+        :key="pet.id"
+      >
         <td>{{ pet.id }}</td>
         <td>{{ pet.nome }}</td>
-        <td>{{ pet.idade }}</td>\
+        <td>{{ pet.idade }}</td>
+        \
         <td>{{ pet.especie }}</td>
         <td>{{ pet.tutor }}</td>
+        <td>
+          <router-link to="`/pets/${pet.id}`"> Vizualizar </router-link>
+        </td>
       </tr>
     </tbody>
   </table>
