@@ -1,8 +1,8 @@
 
 <script setup>
-import { RouterView } from 'vue-router';
-import AppNavbar from '@/components/layout/AppNavbar.vue';
-import AppSidebar from '@/components/layout/AppSidebar.vue';
+import { RouterView } from 'vue-router'
+import AppNavbar from './appNavbar.vue';
+import AppSidebar from './appSidebar.vue';
 </script>
 
 <template>

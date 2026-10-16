@@ -14,6 +14,21 @@ const router = createRouter({
       component: () => import('../views/AddPetView.vue'),
     },
     {
+      path: '/tutores',
+      name: 'tutoresView',
+      component: () => import('../views/TutoresView.vue'),
+    },
+    {
+      path: '/tutores/:id',
+      name: 'detalheTutor',
+      component: () => import('../views/TutoresDetailsView.vue')
+    },
+    {
+      path: '/tutores/novo',
+      name: 'addTutores',
+      component: () => import('../views/AddTutoresView.vue'),
+    },
+    {
       path: '/pets',
       name: 'petsView',
       component: () => import('../views/PetViews.vue'),
@@ -22,7 +37,7 @@ const router = createRouter({
       path: '/pets/:id',
       name: 'detalhePet',
       component: () => import('../views/PetDetailsView.vue')
-    }
+    },
   ],
 });
 
