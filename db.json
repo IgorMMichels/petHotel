@@ -1,10 +1,92 @@
 {
   "tutores": [
-    { "id": "1", "nome": "Ana", "telefone": "47999990000" },
-    { "id": "2", "nome": "Carlos", "telefone": "47988880000" }
+    {
+      "id": "1",
+      "nome": "Ana",
+      "telefone": "47999990000",
+      "cpfCnpj": "123.456.789-00",
+      "email": "ana@example.com",
+      "dataNascimento": "1990-04-12",
+      "endereco": {
+        "rua": "Rua das Flores",
+        "numero": "123",
+        "bairro": "Centro",
+        "cidade": "Joinville",
+        "estado": "SC",
+        "cep": "89201-000"
+      }
+    },
+    {
+      "id": "2",
+      "nome": "Carlos",
+      "telefone": "47988880000",
+      "cpfCnpj": "234.567.890-00",
+      "email": "carlos@example.com",
+      "dataNascimento": "1985-09-23",
+      "endereco": {
+        "rua": "Avenida Brasil",
+        "numero": "450",
+        "bairro": "América",
+        "cidade": "Joinville",
+        "estado": "SC",
+        "cep": "89204-100"
+      }
+    },
+    {
+      "id": "3",
+      "nome": "Mariana",
+      "telefone": "47977770000",
+      "cpfCnpj": "345.678.901-00",
+      "email": "mariana@example.com",
+      "dataNascimento": "1993-01-17",
+      "endereco": {
+        "rua": "Rua das Palmeiras",
+        "numero": "78",
+        "bairro": "Atiradores",
+        "cidade": "Joinville",
+        "estado": "SC",
+        "cep": "89203-200"
+      }
+    },
+    {
+      "id": "4",
+      "nome": "Pedro",
+      "telefone": "47966660000",
+      "cpfCnpj": "456.789.012-00",
+      "email": "pedro@example.com",
+      "dataNascimento": "1988-06-05",
+      "endereco": {
+        "rua": "Rua do Príncipe",
+        "numero": "910",
+        "bairro": "Centro",
+        "cidade": "Joinville",
+        "estado": "SC",
+        "cep": "89201-001"
+      }
+    },
+    {
+      "id": "5",
+      "nome": "Associação Patinhas Felizes",
+      "telefone": "4733330000",
+      "cpfCnpj": "12.345.678/0001-00",
+      "email": "patinhasfelizes@example.com",
+      "dataNascimento": "",
+      "endereco": {
+        "rua": "Rua dos Animais",
+        "numero": "50",
+        "bairro": "Saguaçu",
+        "cidade": "Joinville",
+        "estado": "SC",
+        "cep": "89221-010"
+      }
+    }
   ],
   "pets": [
     { "id": "1", "nome": "Safira", "especie": "Cachorro", "tutorId": "1" },
-    { "id": "2", "nome": "Nino", "especie": "Gato", "tutorId": "1" }
+    { "id": "2", "nome": "Nino", "especie": "Gato", "tutorId": "1" },
+    { "id": "3", "nome": "Thor", "especie": "Cachorro", "tutorId": "2" },
+    { "id": "4", "nome": "Luna", "especie": "Gato", "tutorId": "3" },
+    { "id": "5", "nome": "Mel", "especie": "Cachorro", "tutorId": "4" },
+    { "id": "6", "nome": "Bob", "especie": "Cachorro", "tutorId": "5" }
   ]
 }
