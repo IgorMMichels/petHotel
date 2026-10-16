@@ -14,6 +14,11 @@ const router = createRouter({
       component: () => import('../views/AddPetView.vue'),
     },
     {
+      path: '/tutores/novo',
+      name: 'addTutores',
+      component: () => import('../views/AddTutoresView.vue'),
+    },
+    {
       path: '/tutores',
       name: 'tutoresView',
       component: () => import('../views/TutoresView.vue'),
@@ -22,11 +27,6 @@ const router = createRouter({
       path: '/tutores/:id',
       name: 'detalheTutor',
       component: () => import('../views/TutoresDetailsView.vue')
-    },
-    {
-      path: '/tutores/novo',
-      name: 'addTutores',
-      component: () => import('../views/AddTutoresView.vue'),
     },
     {
       path: '/pets',

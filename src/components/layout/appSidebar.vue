@@ -30,8 +30,7 @@ import { RouterLink } from 'vue-router';
       </RouterLink>
 
       <RouterLink
-        class="nav-link text-body-secondary"
-        aria-disabled="true"
+        class="nav-link"
         to="/tutores"
       >
         <i
@@ -41,8 +40,7 @@ import { RouterLink } from 'vue-router';
         Tutores
     </RouterLink>
       <RouterLink
-        class="nav-link text-body-secondary"
-        aria-disabled="true"
+        class="nav-link"
         to="/tutores/novo"
       >
         <i
