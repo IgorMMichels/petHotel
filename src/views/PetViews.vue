@@ -30,27 +30,59 @@ async function carregarDados() {
 }
 
 function nomeTutor(tutorId) {
-  return tutores.value.find((tutor) => tutor.id == tutorId)?.nome ?? 'Tutor não encontrado';
+  return (
+    tutores.value.find((tutor) => tutor.id == tutorId)?.nome ??
+    'Tutor não encontrado'
+  );
 }
 
 onMounted(carregarDados);
 </script>
 
 <template>
-  <header class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+  <header
+    class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4"
+  >
     <div>
       <h1 class="h2 fw-bold mb-1">Pets</h1>
       <p class="text-body-secondary mb-0">Pets cadastrados no sistema.</p>
     </div>
-    <RouterLink class="btn btn-primary" :to="{ name: 'addPet' }">
-      <i class="bi bi-plus-circle me-2" aria-hidden="true"></i>Adicionar pet
+    <RouterLink
+      class="btn btn-primary"
+      :to="{ name: 'addPet' }"
+    >
+      <i
+        class="bi bi-plus-circle me-2"
+        aria-hidden="true"
+      ></i
+      >Adicionar pet
     </RouterLink>
   </header>
 
-  <p v-if="erro" class="alert alert-danger" role="alert">{{ erro }}</p>
-  <p v-else-if="carregando" class="text-body-secondary" role="status">Carregando pets...</p>
-  <div v-else-if="pets.length === 0" class="alert alert-info">Nenhum pet cadastrado.</div>
-  <div v-else class="table-responsive">
+  <p
+    v-if="erro"
+    class="alert alert-danger"
+    role="alert"
+  >
+    {{ erro }}
+  </p>
+  <p
+    v-else-if="carregando"
+    class="text-body-secondary"
+    role="status"
+  >
+    Carregando pets...
+  </p>
+  <div
+    v-else-if="pets.length === 0"
+    class="alert alert-info"
+  >
+    Nenhum pet cadastrado.
+  </div>
+  <div
+    v-else
+    class="table-responsive"
+  >
     <table class="table table-striped table-hover align-middle">
       <thead>
         <tr>
@@ -62,13 +94,19 @@ onMounted(carregarDados);
         </tr>
       </thead>
       <tbody>
-        <tr v-for="pet in pets" :key="pet.id">
+        <tr
+          v-for="pet in pets"
+          :key="pet.id"
+        >
           <td>{{ pet.id }}</td>
           <td>{{ pet.nome }}</td>
           <td>{{ pet.especie }}</td>
           <td>{{ nomeTutor(pet.tutorId) }}</td>
           <td>
-            <RouterLink class="btn btn-sm btn-outline-primary" :to="`/pets/${pet.id}`">
+            <RouterLink
+              class="btn btn-sm btn-outline-primary"
+              :to="`/pets/${pet.id}`"
+            >
               Visualizar
             </RouterLink>
           </td>

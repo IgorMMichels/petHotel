@@ -2,17 +2,19 @@
 import { onMounted, ref } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 
-const API_URL = 'http://localhost:3000/tutores';
+const API_URL = 'http://localhost:3000';
 const route = useRoute();
 const tutor = ref(null);
 const carregando = ref(true);
 const erro = ref('');
+const pets = ref[''];
 
 async function carregarTutor() {
   try {
-    const resposta = await fetch(`${API_URL}/${route.params.id}`);
+    const resposta = await fetch(`${API_URL}/tutores/${route.params.id}`);
     if (!resposta.ok) throw new Error('Tutor não encontrado.');
     tutor.value = await resposta.json();
+    pets.value = await fetch(`${API_URL}/pets/${route.params.id}`);
   } catch (error) {
     erro.value = `${error.message} Verifique se o JSON Server está rodando.`;
   } finally {
@@ -29,14 +31,37 @@ onMounted(carregarTutor);
     <p class="text-body-secondary mb-0">Dados do tutor selecionado.</p>
   </header>
 
-  <p v-if="carregando" class="text-body-secondary" role="status">Carregando tutor...</p>
-  <p v-else-if="erro" class="alert alert-danger" role="alert">{{ erro }}</p>
-  <div v-else-if="tutor" class="card" style="max-width: 32rem">
+  <p
+    v-if="carregando"
+    class="text-body-secondary"
+    role="status"
+  >
+    Carregando tutor...
+  </p>
+  <p
+    v-else-if="erro"
+    class="alert alert-danger"
+    role="alert"
+  >
+    {{ erro }}
+  </p>
+  <div
+    v-else-if="tutor"
+    class="card"
+    style="max-width: 32rem"
+  >
     <div class="card-body">
       <p><strong>ID:</strong> {{ tutor.id }}</p>
       <p><strong>Nome:</strong> {{ tutor.nome }}</p>
       <p class="mb-4"><strong>Telefone:</strong> {{ tutor.telefone }}</p>
-      <RouterLink class="btn btn-outline-secondary" :to="{ name: 'tutoresView' }">Voltar</RouterLink>
+      <p><strong>E-mail:</strong> {{ tutor.email }}</p>
+      <p><strong>Data de Nascimento:</strong> {{ tutor.dataNascimento }}</p>
+      <p><strong>Cpf/Cnpj:</strong> {{ tutor.cpfCnpj }}</p>
+      <RouterLink
+        class="btn btn-outline-secondary"
+        :to="{ name: 'tutoresView' }"
+        >Voltar</RouterLink
+      >
     </div>
   </div>
 </template>

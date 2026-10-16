@@ -50,41 +50,108 @@ onMounted(carregarTutores);
     <p class="text-body-secondary mb-0">Cadastre um pet no sistema.</p>
   </header>
 
-  <p v-if="erro" class="alert alert-danger" role="alert">{{ erro }}</p>
-  <p v-else-if="carregandoTutores" class="text-body-secondary" role="status">
+  <p
+    v-if="erro"
+    class="alert alert-danger"
+    role="alert"
+  >
+    {{ erro }}
+  </p>
+  <p
+    v-else-if="carregandoTutores"
+    class="text-body-secondary"
+    role="status"
+  >
     Carregando tutores...
   </p>
-  <div v-else-if="tutores.length === 0" class="alert alert-warning" role="alert">
+  <div
+    v-else-if="tutores.length === 0"
+    class="alert alert-warning"
+    role="alert"
+  >
     Cadastre um tutor antes de adicionar um pet.
   </div>
 
-  <form v-else class="row g-3" @submit.prevent="salvarPet">
+  <form
+    v-else
+    class="row g-3"
+    @submit.prevent="salvarPet"
+  >
     <div class="col-md-6">
-      <label for="nome" class="form-label">Nome do pet</label>
-      <input id="nome" v-model.trim="novoPet.nome" class="form-control" type="text" required />
+      <label
+        for="nome"
+        class="form-label"
+        >Nome do pet</label
+      >
+      <input
+        id="nome"
+        v-model.trim="novoPet.nome"
+        class="form-control"
+        type="text"
+        required
+      />
     </div>
     <div class="col-md-6">
-      <label for="especie" class="form-label">Espécie</label>
-      <select id="especie" v-model="novoPet.especie" class="form-select" required>
-        <option value="" disabled>Selecione a espécie</option>
+      <label
+        for="especie"
+        class="form-label"
+        >Espécie</label
+      >
+      <select
+        id="especie"
+        v-model="novoPet.especie"
+        class="form-select"
+        required
+      >
+        <option
+          value=""
+          disabled
+        >
+          Selecione a espécie
+        </option>
         <option value="Cachorro">Cachorro</option>
         <option value="Gato">Gato</option>
       </select>
     </div>
     <div class="col-md-6">
-      <label for="tutor" class="form-label">Tutor</label>
-      <select id="tutor" v-model="novoPet.tutorId" class="form-select" required>
-        <option value="" disabled>Selecione o tutor</option>
-        <option v-for="tutor in tutores" :key="tutor.id" :value="tutor.id">
+      <label
+        for="tutor"
+        class="form-label"
+        >Tutor</label
+      >
+      <select
+        id="tutor"
+        v-model="novoPet.tutorId"
+        class="form-select"
+        required
+      >
+        <option
+          value=""
+          disabled
+        >
+          Selecione o tutor
+        </option>
+        <option
+          v-for="tutor in tutores"
+          :key="tutor.id"
+          :value="tutor.id"
+        >
           {{ tutor.nome }}
         </option>
       </select>
     </div>
     <div class="col-12 d-flex gap-2">
-      <button class="btn btn-primary" type="submit" :disabled="salvando">
+      <button
+        class="btn btn-primary"
+        type="submit"
+        :disabled="salvando"
+      >
         {{ salvando ? 'Salvando...' : 'Salvar pet' }}
       </button>
-      <RouterLink class="btn btn-outline-secondary" :to="{ name: 'petsView' }">
+      <RouterLink
+        class="btn btn-outline-secondary"
+        :to="{ name: 'petsView' }"
+      >
         Cancelar
       </RouterLink>
     </div>

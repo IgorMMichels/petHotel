@@ -34,21 +34,58 @@ async function salvarTutor() {
     <p class="text-body-secondary mb-0">Cadastre um tutor no sistema.</p>
   </header>
 
-  <form class="row g-3" @submit.prevent="salvarTutor">
-    <p v-if="erro" class="alert alert-danger mb-0" role="alert">{{ erro }}</p>
+  <form
+    class="row g-3"
+    @submit.prevent="salvarTutor"
+  >
+    <p
+      v-if="erro"
+      class="alert alert-danger mb-0"
+      role="alert"
+    >
+      {{ erro }}
+    </p>
     <div class="col-md-6">
-      <label for="nome" class="form-label">Nome</label>
-      <input id="nome" v-model.trim="tutor.nome" class="form-control" type="text" required />
+      <label
+        for="nome"
+        class="form-label"
+        >Nome</label
+      >
+      <input
+        id="nome"
+        v-model.trim="tutor.nome"
+        class="form-control"
+        type="text"
+        required
+      />
     </div>
     <div class="col-md-6">
-      <label for="telefone" class="form-label">Telefone</label>
-      <input id="telefone" v-model.trim="tutor.telefone" class="form-control" type="tel" required />
+      <label
+        for="telefone"
+        class="form-label"
+        >Telefone</label
+      >
+      <input
+        id="telefone"
+        v-model.trim="tutor.telefone"
+        class="form-control"
+        type="tel"
+        required
+      />
     </div>
     <div class="col-12 d-flex gap-2">
-      <button class="btn btn-primary" type="submit" :disabled="salvando">
+      <button
+        class="btn btn-primary"
+        type="submit"
+        :disabled="salvando"
+      >
         {{ salvando ? 'Salvando...' : 'Salvar tutor' }}
       </button>
-      <RouterLink class="btn btn-outline-secondary" :to="{ name: 'tutoresView' }">Cancelar</RouterLink>
+      <RouterLink
+        class="btn btn-outline-secondary"
+        :to="{ name: 'tutoresView' }"
+        >Cancelar</RouterLink
+      >
     </div>
   </form>
 </template>

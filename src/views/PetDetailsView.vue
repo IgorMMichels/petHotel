@@ -16,7 +16,9 @@ async function carregarPet() {
     pet.value = await respostaPet.json();
 
     if (pet.value.tutorId) {
-      const respostaTutor = await fetch(`${API_URL}/tutores/${pet.value.tutorId}`);
+      const respostaTutor = await fetch(
+        `${API_URL}/tutores/${pet.value.tutorId}`,
+      );
       if (respostaTutor.ok) tutor.value = await respostaTutor.json();
     }
   } catch (error) {
@@ -35,15 +37,36 @@ onMounted(carregarPet);
     <p class="text-body-secondary mb-0">Dados do pet selecionado.</p>
   </header>
 
-  <p v-if="carregando" class="text-body-secondary" role="status">Carregando pet...</p>
-  <p v-else-if="erro" class="alert alert-danger" role="alert">{{ erro }}</p>
-  <div v-else-if="pet" class="card" style="max-width: 32rem">
+  <p
+    v-if="carregando"
+    class="text-body-secondary"
+    role="status"
+  >
+    Carregando pet...
+  </p>
+  <p
+    v-else-if="erro"
+    class="alert alert-danger"
+    role="alert"
+  >
+    {{ erro }}
+  </p>
+  <div
+    v-else-if="pet"
+    class="card"
+    style="max-width: 32rem"
+  >
     <div class="card-body">
       <p><strong>ID:</strong> {{ pet.id }}</p>
       <p><strong>Nome:</strong> {{ pet.nome }}</p>
       <p><strong>Espécie:</strong> {{ pet.especie }}</p>
-      <p class="mb-4"><strong>Tutor:</strong> {{ tutor?.nome ?? 'Tutor não encontrado' }}</p>
-      <RouterLink class="btn btn-outline-secondary" :to="{ name: 'petsView' }">
+      <p class="mb-4">
+        <strong>Tutor:</strong> {{ tutor?.nome ?? 'Tutor não encontrado' }}
+      </p>
+      <RouterLink
+        class="btn btn-outline-secondary"
+        :to="{ name: 'petsView' }"
+      >
         Voltar
       </RouterLink>
     </div>
