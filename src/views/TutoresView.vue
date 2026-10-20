@@ -6,7 +6,7 @@ const API_URL = 'http://localhost:3000';
 const tutores = ref([]);
 const carregando = ref(true);
 const erro = ref('');
-const pets = ref([])
+const pets = ref([]);
 const userType = ref('CPF'); // userType == CNPJ
 
 async function carregarDados() {
@@ -30,12 +30,23 @@ async function carregarDados() {
   }
 }
 
-
 async function removerTutor(id) {
-  if (!window.confirm('Tem certeza que deseja remover este tutor?')) return;
+  if (!window.confirm('Deseja realmente remover este tutor?')) return;
 
   try {
-    const resposta = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+    const respostaPets = await fetch(
+      `${API_URL}/pets?tutorId=${encodeURIComponent(id)}`,
+    );
+    if (!respostaPets.ok)
+      throw new Error('Não foi possível verificar os pets vinculados.');
+    const vinculados = await respostaPets.json();
+    if (vinculados.length)
+      throw new Error(
+        'Remova ou transfira os pets vinculados antes de remover este tutor.',
+      );
+    const resposta = await fetch(`${API_URL}/tutores/${id}`, {
+      method: 'DELETE',
+    });
     if (!resposta.ok) throw new Error('Não foi possível remover o tutor.');
     await carregarDados();
   } catch (error) {
@@ -100,8 +111,12 @@ onMounted(carregarDados);
           <th scope="col">E-mail</th>
           <th scope="col">Pets (Qnt)</th>
           <th scope="col">Nome dos Pets</th>
-          <th scope="col" class="text-right">Ações</th>
-          
+          <th
+            scope="col"
+            class="text-right"
+          >
+            Ações
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -115,9 +130,14 @@ onMounted(carregarDados);
           <td v-else>**.***.***/****.**</td>
           <td>{{ tutor.telefone }}</td>
           <td>{{ tutor.email }}</td>
-          <td>{{ pets.filter(pet => pet.tutorId === tutor.id).length }}</td>
-          <td v-if="pets.filter(pet => pet.tutorId === tutor.id).length > 0">
-            {{ pets.filter(pet => pet.tutorId === tutor.id).map(pet => pet.nome).join(' / ') }}
+          <td>{{ pets.filter((pet) => pet.tutorId === tutor.id).length }}</td>
+          <td v-if="pets.filter((pet) => pet.tutorId === tutor.id).length > 0">
+            {{
+              pets
+                .filter((pet) => pet.tutorId === tutor.id)
+                .map((pet) => pet.nome)
+                .join(' / ')
+            }}
           </td>
           <td v-else>Nenhum pet vinculado</td>
           <td class="text-nowrap">

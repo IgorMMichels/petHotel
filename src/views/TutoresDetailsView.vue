@@ -11,6 +11,49 @@ const tutor = ref(null);
 const pets = ref([]);
 const removendo = ref(false);
 const erroRemocao = ref('');
+const novoPet = ref({ nome: '', especie: '' });
+const salvandoPet = ref(false);
+const erroPet = ref('');
+
+async function carregarPets() {
+  const resposta = await fetch(
+    `${API_URL}/pets?tutorId=${encodeURIComponent(route.params.id)}`,
+  );
+  if (!resposta.ok)
+    throw new Error('Não foi possível carregar os pets vinculados.');
+  pets.value = await resposta.json();
+}
+
+async function salvarPet() {
+  if (
+    salvandoPet.value ||
+    removendo.value ||
+    !novoPet.value.nome.trim() ||
+    !novoPet.value.especie.trim()
+  )
+    return;
+  salvandoPet.value = true;
+  erroPet.value = '';
+  try {
+    const resposta = await fetch(`${API_URL}/pets`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nome: novoPet.value.nome.trim(),
+        especie: novoPet.value.especie.trim(),
+        tutorId: route.params.id,
+      }),
+    });
+    if (!resposta.ok) throw new Error('Não foi possível cadastrar o pet.');
+    const pet = await resposta.json();
+    pets.value.push(pet);
+    novoPet.value = { nome: '', especie: '' };
+  } catch (error) {
+    erroPet.value = error.message;
+  } finally {
+    salvandoPet.value = false;
+  }
+}
 
 async function carregarDados() {
   carregando.value = true;
@@ -26,11 +69,7 @@ async function carregarDados() {
       );
     }
     tutor.value = await resposta.json();
-    const respostaPets = await fetch(`${API_URL}/pets`);
-    if (!respostaPets.ok)
-      throw new Error('Não foi possível carregar os pets vinculados.');
-    const todosPets = await respostaPets.json();
-    pets.value = todosPets.filter((pet) => pet.tutorId === tutor.value.id);
+    await carregarPets();
   } catch (error) {
     erro.value = `${error.message} Verifique se o JSON Server está rodando.`;
   } finally {
@@ -39,11 +78,17 @@ async function carregarDados() {
 }
 
 async function removerTutor() {
-  if (!window.confirm('Tem certeza que deseja remover este tutor?')) return;
+  if (removendo.value || salvandoPet.value) return;
+  if (!window.confirm('Deseja realmente remover este tutor?')) return;
 
   removendo.value = true;
   erroRemocao.value = '';
   try {
+    await carregarPets();
+    if (pets.value.length)
+      throw new Error(
+        'Remova ou transfira os pets vinculados antes de remover este tutor.',
+      );
     const resposta = await fetch(`${API_URL}/tutores/${tutor.value.id}`, {
       method: 'DELETE',
     });
@@ -202,8 +247,64 @@ onMounted(carregarDados);
         v-else
         class="card-body mb-0 text-body-secondary"
       >
-        Nenhum pet vinculado.
+        Nenhum pet vinculado a este tutor.
       </p>
+    </section>
+
+    <section class="card">
+      <h2 class="card-header h6 mb-0">Cadastrar pet para este tutor</h2>
+      <form
+        class="card-body row g-3"
+        @submit.prevent="salvarPet"
+      >
+        <p
+          v-if="erroPet"
+          class="alert alert-danger"
+          role="alert"
+        >
+          {{ erroPet }}
+        </p>
+        <div class="col-12 col-md-6">
+          <label
+            for="nome-pet"
+            class="form-label"
+            >Nome do pet</label
+          >
+          <input
+            id="nome-pet"
+            v-model.trim="novoPet.nome"
+            class="form-control"
+            required
+          />
+        </div>
+        <div class="col-12 col-md-6">
+          <label
+            for="especie-pet"
+            class="form-label"
+            >Espécie</label
+          >
+          <input
+            id="especie-pet"
+            v-model.trim="novoPet.especie"
+            class="form-control"
+            required
+          />
+        </div>
+        <div class="col-12">
+          <button
+            class="btn btn-primary"
+            type="submit"
+            :disabled="
+              salvandoPet ||
+              removendo ||
+              !novoPet.nome.trim() ||
+              !novoPet.especie.trim()
+            "
+          >
+            {{ salvandoPet ? 'Salvando...' : 'Salvar pet' }}
+          </button>
+        </div>
+      </form>
     </section>
 
     <p
@@ -217,7 +318,7 @@ onMounted(carregarDados);
       <button
         class="btn btn-outline-danger"
         type="button"
-        :disabled="removendo"
+        :disabled="removendo || salvandoPet"
         @click="removerTutor"
       >
         {{ removendo ? 'Removendo...' : 'Remover Tutor' }}

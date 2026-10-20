@@ -1,11 +1,10 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 
 const API_URL = 'http://localhost:3000/tutores';
 const router = useRouter();
 const tutor = ref({
-  id: '',
   nome: '',
   telefone: '',
   cpfCnpj: '',
@@ -22,7 +21,55 @@ const tutor = ref({
 });
 const salvando = ref(false);
 const erro = ref('');
+const mensagemObrigatorio = 'Ops, campo obrigatório, por favor preencha-o!';
+const telefoneValido = computed(() =>
+  /^\d{10,11}$/.test(tutor.value.telefone.replace(/\D/g, '')),
+);
+const emailValido = computed(
+  () =>
+    !tutor.value.email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(tutor.value.email),
+);
+const documentoValido = computed(
+  () =>
+    !tutor.value.cpfCnpj ||
+    [11, 14].includes(tutor.value.cpfCnpj.replace(/\D/g, '').length),
+);
+const podeSalvar = computed(
+  () =>
+    Boolean(tutor.value.nome.trim()) &&
+    telefoneValido.value &&
+    emailValido.value &&
+    documentoValido.value,
+);
+
+function formatarTelefone(event) {
+  const numeros = event.target.value.replace(/\D/g, '').slice(0, 11);
+  const tamanhoPrefixo = numeros.length > 10 ? 5 : 4;
+  tutor.value.telefone =
+    numeros.length <= 2
+      ? numeros
+      : `(${numeros.slice(0, 2)}) ${numeros.slice(2, 2 + tamanhoPrefixo)}${numeros.length > 2 + tamanhoPrefixo ? '-' + numeros.slice(2 + tamanhoPrefixo) : ''}`;
+  event.target.value = tutor.value.telefone;
+}
+
+function formatarDocumento(event) {
+  const numeros = event.target.value.replace(/\D/g, '').slice(0, 14);
+  tutor.value.cpfCnpj =
+    numeros.length <= 11
+      ? numeros
+          .replace(/^(\d{3})(\d)/, '$1.$2')
+          .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+          .replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4')
+      : numeros
+          .replace(/^(\d{2})(\d)/, '$1.$2')
+          .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+          .replace(/\.(\d{3})(\d)/, '.$1/$2')
+          .replace(/(\d{4})(\d)/, '$1-$2');
+  event.target.value = tutor.value.cpfCnpj;
+}
+
 async function salvarTutor() {
+  if (!podeSalvar.value || salvando.value) return;
   salvando.value = true;
   erro.value = '';
 
@@ -30,7 +77,11 @@ async function salvarTutor() {
     const resposta = await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(tutor.value),
+      body: JSON.stringify({
+        ...tutor.value,
+        telefone: tutor.value.telefone.replace(/\D/g, ''),
+        cpfCnpj: tutor.value.cpfCnpj.replace(/\D/g, ''),
+      }),
     });
     if (!resposta.ok) throw new Error('Não foi possível salvar o tutor.');
     await router.push({ name: 'tutoresView' });
@@ -44,6 +95,8 @@ async function salvarTutor() {
 async function carregaEndereco() {
   const cep = tutor.value.endereco.cep.replace(/\D/g, '');
   erro.value = '';
+
+  if (!cep) return;
 
   if (cep.length !== 8) {
     erro.value = 'Informe um CEP com 8 dígitos.';
@@ -73,7 +126,6 @@ async function carregaEndereco() {
     erro.value = 'Erro ao consultar o CEP. Tente novamente.';
   }
 }
-
 </script>
 
 <template>
@@ -102,12 +154,20 @@ async function carregaEndereco() {
         >
         <input
           id="nome"
+          aria-describedby="nome-erro"
+          required
           v-model.trim="tutor.nome"
           class="form-control"
           type="text"
           placeholder="Digite o nome completo do tutor"
-          required
         />
+        <p
+          v-if="!tutor.nome.trim()"
+          id="nome-erro"
+          class="text-danger small mt-1 mb-0"
+        >
+          {{ mensagemObrigatorio }}
+        </p>
       </div>
       <div class="col-md-6">
         <label
@@ -117,12 +177,27 @@ async function carregaEndereco() {
         >
         <input
           id="telefone"
-          v-model.trim="tutor.telefone"
+          aria-describedby="telefone-erro"
+          required
+          :value="tutor.telefone"
+          @input="formatarTelefone"
           class="form-control"
           type="tel"
           placeholder="Digite o telefone do tutor"
-          required
         />
+        <p
+          v-if="!tutor.telefone.trim()"
+          id="telefone-erro"
+          class="text-danger small mt-1 mb-0"
+        >
+          {{ mensagemObrigatorio }}
+        </p>
+        <p
+          v-else-if="!telefoneValido"
+          class="text-danger small mt-1 mb-0"
+        >
+          Informe o DDD e um telefone com 10 ou 11 dígitos.
+        </p>
       </div>
       <div class="col-md-6">
         <label
@@ -132,12 +207,20 @@ async function carregaEndereco() {
         >
         <input
           id="cpfCnpj"
-          v-model.trim="tutor.cpfCnpj"
+          aria-describedby="cpfCnpj-erro"
+          :value="tutor.cpfCnpj"
+          @input="formatarDocumento"
           class="form-control"
           type="text"
           placeholder="Digite o CPF ou CNPJ"
-          required
         />
+        <p
+          v-if="!documentoValido"
+          id="cpfCnpj-erro"
+          class="text-danger small mt-1 mb-0"
+        >
+          Informe um CPF com 11 dígitos ou CNPJ com 14 dígitos.
+        </p>
       </div>
       <div class="col-md-6">
         <label
@@ -150,7 +233,6 @@ async function carregaEndereco() {
           v-model.trim="tutor.dataNascimento"
           class="form-control"
           type="date"
-          required
         />
       </div>
       <div class="col-md-12">
@@ -161,12 +243,19 @@ async function carregaEndereco() {
         >
         <input
           id="email"
+          aria-describedby="email-erro"
           v-model.trim="tutor.email"
           class="form-control"
           placeholder="nome@example.com"
           type="email"
-          required
         />
+        <p
+          v-if="!emailValido"
+          id="email-erro"
+          class="text-danger small mt-1 mb-0"
+        >
+          Informe um e-mail válido.
+        </p>
       </div>
 
       <h3 class="fw-bold">Endereço</h3>
@@ -182,7 +271,6 @@ async function carregaEndereco() {
           class="form-control"
           type="text"
           placeholder="Digite o nome da rua"
-          required
         />
       </div>
       <div class="col-md-4">
@@ -197,7 +285,6 @@ async function carregaEndereco() {
           class="form-control"
           type="text"
           placeholder="Número"
-          required
         />
       </div>
       <div class="col-md-6">
@@ -212,7 +299,6 @@ async function carregaEndereco() {
           class="form-control"
           placeholder="Digite o bairro"
           type="text"
-          required
         />
       </div>
       <div class="col-md-6">
@@ -227,7 +313,6 @@ async function carregaEndereco() {
           class="form-control"
           placeholder="Digite a cidade"
           type="text"
-          required
         />
       </div>
       <div class="col-md-6">
@@ -242,33 +327,39 @@ async function carregaEndereco() {
           class="form-select"
           placeholder="Selecione"
         >
-        <option value="" disabled selected>Selecione</option>
-        <option value="AC">Acre</option>
-        <option value="AL">Alagoas</option>
-        <option value="AP">Amapá</option>
-        <option value="AM">Amazonas</option>
-        <option value="BA">Bahia</option>
-        <option value="CE">Ceará</option>
-        <option value="DF">Distrito Federal</option>
-        <option value="ES">Espírito Santo</option>
-        <option value="GO">Goiás</option>
-        <option value="MA">Maranhão</option>
-        <option value="MT">Mato Grosso</option>
-        <option value="MS">Mato Grosso do Sul</option>
-        <option value="MG">Minas Gerais</option>
-        <option value="PA">Pará</option>
-        <option value="PB">Paraíba</option>
-        <option value="PR">Paraná</option>
-        <option value="PE">Pernambuco</option>
-        <option value="PI">Piauí</option>
-        <option value="RJ">Rio de Janeiro</option>
-        <option value="RN">Rio Grande do Norte</option>
-        <option value="RS">Rio Grande do Sul</option>
-        <option value="RO">Rondônia</option>
-        <option value="RR">Roraima</option>
-        <option value="SC">Santa Catarina</option>
-        <option value="SP">São Paulo</option>
-        <option value="SE">Sergipe</option>
+          <option
+            value=""
+            disabled
+            selected
+          >
+            Selecione
+          </option>
+          <option value="AC">Acre</option>
+          <option value="AL">Alagoas</option>
+          <option value="AP">Amapá</option>
+          <option value="AM">Amazonas</option>
+          <option value="BA">Bahia</option>
+          <option value="CE">Ceará</option>
+          <option value="DF">Distrito Federal</option>
+          <option value="ES">Espírito Santo</option>
+          <option value="GO">Goiás</option>
+          <option value="MA">Maranhão</option>
+          <option value="MT">Mato Grosso</option>
+          <option value="MS">Mato Grosso do Sul</option>
+          <option value="MG">Minas Gerais</option>
+          <option value="PA">Pará</option>
+          <option value="PB">Paraíba</option>
+          <option value="PR">Paraná</option>
+          <option value="PE">Pernambuco</option>
+          <option value="PI">Piauí</option>
+          <option value="RJ">Rio de Janeiro</option>
+          <option value="RN">Rio Grande do Norte</option>
+          <option value="RS">Rio Grande do Sul</option>
+          <option value="RO">Rondônia</option>
+          <option value="RR">Roraima</option>
+          <option value="SC">Santa Catarina</option>
+          <option value="SP">São Paulo</option>
+          <option value="SE">Sergipe</option>
         </select>
       </div>
       <div class="col-md-6">
@@ -284,14 +375,13 @@ async function carregaEndereco() {
           type="text"
           placeholder="00000-000"
           @blur="carregaEndereco"
-          required
         />
       </div>
       <div class="col-12 d-flex gap-2">
         <button
           class="btn btn-primary"
           type="submit"
-          :disabled="salvando"
+          :disabled="salvando || !podeSalvar"
         >
           {{ salvando ? 'Salvando...' : 'Salvar tutor' }}
         </button>
