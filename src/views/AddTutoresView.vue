@@ -16,13 +16,12 @@ const tutor = ref({
     numero: '',
     bairro: '',
     cidade: '',
-    estado: '',
+    estado: '', // uf
     cep: '',
   },
 });
 const salvando = ref(false);
 const erro = ref('');
-
 async function salvarTutor() {
   salvando.value = true;
   erro.value = '';
@@ -42,8 +41,37 @@ async function salvarTutor() {
   }
 }
 
-async function carregaEndereco () {
+async function carregaEndereco() {
+  const cep = tutor.value.endereco.cep.replace(/\D/g, '');
+  erro.value = '';
 
+  if (cep.length !== 8) {
+    erro.value = 'Informe um CEP com 8 dígitos.';
+    return;
+  }
+
+  try {
+    const resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    if (!resposta.ok) throw new Error('Não foi possível consultar o CEP.');
+
+    const data = await resposta.json();
+    if (cep !== tutor.value.endereco.cep.replace(/\D/g, '')) return;
+
+    if (data.erro) {
+      erro.value = 'CEP não encontrado.';
+      return;
+    }
+
+    Object.assign(tutor.value.endereco, {
+      rua: data.logradouro,
+      bairro: data.bairro,
+      cidade: data.localidade,
+      estado: data.uf,
+    });
+  } catch {
+    if (cep !== tutor.value.endereco.cep.replace(/\D/g, '')) return;
+    erro.value = 'Erro ao consultar o CEP. Tente novamente.';
+  }
 }
 
 </script>
@@ -77,6 +105,7 @@ async function carregaEndereco () {
           v-model.trim="tutor.nome"
           class="form-control"
           type="text"
+          placeholder="Digite o nome completo do tutor"
           required
         />
       </div>
@@ -91,6 +120,7 @@ async function carregaEndereco () {
           v-model.trim="tutor.telefone"
           class="form-control"
           type="tel"
+          placeholder="Digite o telefone do tutor"
           required
         />
       </div>
@@ -105,6 +135,7 @@ async function carregaEndereco () {
           v-model.trim="tutor.cpfCnpj"
           class="form-control"
           type="text"
+          placeholder="Digite o CPF ou CNPJ"
           required
         />
       </div>
@@ -132,6 +163,7 @@ async function carregaEndereco () {
           id="email"
           v-model.trim="tutor.email"
           class="form-control"
+          placeholder="nome@example.com"
           type="email"
           required
         />
@@ -140,15 +172,16 @@ async function carregaEndereco () {
       <h3 class="fw-bold">Endereço</h3>
       <div class="col-md-8">
         <label
-          for="endereco"
+          for="rua"
           class="form-label"
-          >Endereço</label
+          >Rua</label
         >
         <input
-          id="endereco"
+          id="rua"
           v-model.trim="tutor.endereco.rua"
           class="form-control"
           type="text"
+          placeholder="Digite o nome da rua"
           required
         />
       </div>
@@ -163,6 +196,7 @@ async function carregaEndereco () {
           v-model.trim="tutor.endereco.numero"
           class="form-control"
           type="text"
+          placeholder="Número"
           required
         />
       </div>
@@ -176,6 +210,7 @@ async function carregaEndereco () {
           id="bairro"
           v-model.trim="tutor.endereco.bairro"
           class="form-control"
+          placeholder="Digite o bairro"
           type="text"
           required
         />
@@ -190,6 +225,7 @@ async function carregaEndereco () {
           id="cidade"
           v-model.trim="tutor.endereco.cidade"
           class="form-control"
+          placeholder="Digite a cidade"
           type="text"
           required
         />
@@ -204,8 +240,9 @@ async function carregaEndereco () {
           id="estado"
           v-model.trim="tutor.endereco.estado"
           class="form-select"
+          placeholder="Selecione"
         >
-        <option selected>Selecione o Estado</option>
+        <option value="" disabled selected>Selecione</option>
         <option value="AC">Acre</option>
         <option value="AL">Alagoas</option>
         <option value="AP">Amapá</option>
@@ -245,6 +282,8 @@ async function carregaEndereco () {
           v-model.trim="tutor.endereco.cep"
           class="form-control"
           type="text"
+          placeholder="00000-000"
+          @blur="carregaEndereco"
           required
         />
       </div>

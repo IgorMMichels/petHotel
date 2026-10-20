@@ -7,6 +7,7 @@ const tutores = ref([]);
 const carregando = ref(true);
 const erro = ref('');
 const pets = ref([])
+const userType = ref('CPF'); // userType == CNPJ
 
 async function carregarDados() {
   carregando.value = true;
@@ -94,8 +95,13 @@ onMounted(carregarDados);
         <tr>
           <th scope="col">ID</th>
           <th scope="col">Nome</th>
+          <th scope="col">CPF/CNPJ</th>
           <th scope="col">Telefone</th>
-          <th scope="col">Ações</th>
+          <th scope="col">E-mail</th>
+          <th scope="col">Pets (Qnt)</th>
+          <th scope="col">Nome dos Pets</th>
+          <th scope="col" class="text-right">Ações</th>
+          
         </tr>
       </thead>
       <tbody>
@@ -104,19 +110,25 @@ onMounted(carregarDados);
           :key="tutor.id"
         >
           <td>{{ tutor.id }}</td>
-          <td>{{ tutor.cpfCnpj }}</td>
           <td>{{ tutor.nome }}</td>
+          <td v-if="userType === 'CPF'">***.***.***-**</td>
+          <td v-else>**.***.***/****.**</td>
           <td>{{ tutor.telefone }}</td>
           <td>{{ tutor.email }}</td>
+          <td>{{ pets.filter(pet => pet.tutorId === tutor.id).length }}</td>
+          <td v-if="pets.filter(pet => pet.tutorId === tutor.id).length > 0">
+            {{ pets.filter(pet => pet.tutorId === tutor.id).map(pet => pet.nome).join(' / ') }}
+          </td>
+          <td v-else>Nenhum pet vinculado</td>
           <td class="text-nowrap">
             <RouterLink
-              class="btn btn-sm btn-outline-primary me-2"
+              class="btn btn-sm bi-eye btn-outline-primary me-2"
               :to="`/tutores/${tutor.id}`"
             >
               Visualizar
             </RouterLink>
             <button
-              class="btn btn-sm btn-outline-danger"
+              class="btn btn-sm bi-trash btn-outline-danger"
               type="button"
               @click="removerTutor(tutor.id)"
             >
